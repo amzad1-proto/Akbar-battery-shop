@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Our Inventory | Akbar Battery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-12">
+        <h1 class="text-4xl font-black text-center mb-16 text-gray-900 uppercase italic tracking-tighter">
+            Akbar Battery & Automobiles <br>
+            <span class="text-xl font-normal text-gray-600 normal-case italic">Sathupally, Telangana</span>
+        </h1>
+
+        <!-- Define the categories you want to display -->
+        <% const sections=['Vehicle', 'Inverter' , 'Lubricant' ]; %>
+
+            <% sections.forEach(section=> { %>
+                <!-- Filter products for the current section -->
+                <% const filteredProducts=products.filter(item=> item.category === section); %>
+
+                    <!-- Only show the section if there are products in it -->
+                    <% if (filteredProducts.length> 0) { %>
+                        <div class="mb-20">
+                            <div class="flex items-center mb-8">
+                                <h2 class="text-3xl font-bold text-gray-800 uppercase tracking-wide">
+                                    <%= section %>s
+                                </h2>
+                                <div class="flex-grow h-1 bg-green-600 ml-6 rounded-full opacity-20"></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                                <% filteredProducts.forEach(item=> { %>
+                                    <div
+                                        class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col hover:shadow-2xl transition-shadow duration-300">
+
+                                        <!-- Image Section -->
+                                        <div class="h-64 bg-gray-200 relative">
+                                            <% if (item.image) { %>
+                                                <img src="<%= item.image %>" class="w-full h-full object-cover"
+                                                    alt="Product">
+                                                <% } else { %>
+                                                    <div
+                                                        class="flex items-center justify-center h-full text-gray-400 italic">
+                                                        No Photo Available</div>
+                                                    <% } %>
+
+                                                        <!-- Brand Badge -->
+                                                        <div
+                                                            class="absolute top-4 left-4 <%= item.brand === 'Amaron' ? 'bg-green-600' : 'bg-yellow-500' %> text-white px-3 py-1 rounded-full text-xs font-bold uppercase shadow-md">
+                                                            <%= item.brand %>
+                                                        </div>
+                                        </div>
+
+                                        <!-- Details Section -->
+                                        <div class="p-6 flex-grow flex flex-col">
+                                            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                                                <%= item.name %>
+                                            </h2>
+
+                                            <div class="mt-auto flex justify-between items-center">
+                                                <div class="flex flex-col">
+                                                    <span
+                                                        class="text-gray-400 text-xs uppercase font-bold tracking-tighter leading-none">Price</span>
+                                                    <span class="text-3xl font-black text-gray-900 leading-tight">₹<%=
+                                                            item.price %></span>
+                                                </div>
+                                                <a href="tel:+919505433426"
+                                                    class="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-600 transition-colors duration-300 flex items-center gap-2">
+                                                    <span>Order Now</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                        </div>
+                        <% } %>
+                            <% }) %>
+    </div>
+</body>
+
+</html>

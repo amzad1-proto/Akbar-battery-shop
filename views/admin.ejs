@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Akbar Battery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 pb-2">Inventory Management</h1>
+
+        <!-- Add Product Form -->
+        <div class="bg-white p-6 rounded-xl shadow-md mb-10">
+            <h2 class="text-xl font-semibold mb-4">Add New Item</h2>
+            <form action="/admin/add" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <input type="text" name="name" placeholder="Battery/Product Name" class="w-full border p-2 rounded"
+                    required>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <select name="brand" class="border p-2 rounded" required>
+                        <option value="" disabled selected>Select Brand</option>
+                        <option value="Amaron">Amaron</option>
+                        <option value="Powerzone">Powerzone</option>
+                    </select>
+                    <select name="category" class="border p-2 rounded" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Vehicle">Vehicle</option>
+                        <option value="Inverter">Inverter</option>
+                        <option value="Lubricant">Lubricant</option>
+                    </select>
+                </div>
+
+                <input type="text" name="price" placeholder="Price (e.g. 5400)" class="w-full border p-2 rounded">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Product Image</label>
+                    <input type="file" name="productImage" class="mt-1 block w-full text-sm text-gray-500"
+                        accept="image/*">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700">Upload to
+                    Shop</button>
+            </form>
+        </div>
+
+        <!-- Inventory List -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="p-3">Item</th>
+                        <th class="p-3">Brand</th>
+                        <th class="p-3">Category</th>
+                        <th class="p-3 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.forEach(item=> { %>
+                        <tr class="border-b">
+                            <td class="p-3 font-medium">
+                                <%= item.name %>
+                            </td>
+                            <td class="p-3">
+                                <%= item.brand %>
+                            </td>
+                            <td class="p-3">
+                                <%= item.category %>
+                            </td>
+                            <td class="p-3 text-center">
+                                <form action="/admin/delete/<%= item._id %>" method="POST"
+                                    onsubmit="return confirm('Remove this item?')">
+                                    <button
+                                        class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
