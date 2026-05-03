@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer');
+const basicAuth = require('express-basic-auth'); // Added for security
 const app = express();
 
-// 1. Database Connection - Updated with your Atlas String and Password
+// 1. Database Connection
 const dbURI = process.env.MONGODB_URI || 'your_old_link_here';
 
 mongoose.connect(dbURI)
@@ -22,10 +23,18 @@ const upload = multer({ storage: storage });
 // 3. App Setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public'))); // Robust path for hosting[cite: 3]
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// 4. Product Data Model[cite: 3]
+// 4. Admin Security Middleware
+// This protects ALL routes starting with /admin
+app.use('/admin', basicAuth({
+    users: { [process.env.ADMIN_USER || 'admin']: process.env.ADMIN_PASS || 'akbar786' },
+    challenge: true, // Shows the browser login popup
+    realm: 'Akbar Battery Admin'
+}));
+
+// 5. Product Data Model
 const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
     brand: { type: String, enum: ['Amaron', 'Powerzone'], required: true },
@@ -41,7 +50,12 @@ app.get('/', (req, res) => res.render('home'));
 app.get('/about', (req, res) => res.render('about'));
 app.get('/contact', (req, res) => res.render('contact'));
 
-// Consumer Products Page with Section Filtering[cite: 3]
+// Logout route to clear session
+app.get('/logout', (req, res) => {
+    res.status(401).send('Logged out of Akbar Battery Admin. Close your browser to fully secure.');
+});
+
+// Consumer Products Page
 app.get('/products', async (req, res) => {
     try {
         const allProducts = await Product.find({});
@@ -51,7 +65,7 @@ app.get('/products', async (req, res) => {
     }
 });
 
-// Admin Dashboard[cite: 3]
+// Admin Dashboard (Now protected by basicAuth)
 app.get('/admin', async (req, res) => {
     try {
         const allProducts = await Product.find({});
@@ -61,7 +75,7 @@ app.get('/admin', async (req, res) => {
     }
 });
 
-// Add New Product Route[cite: 3]
+// Add New Product Route (Now protected by basicAuth)[cite: 1]
 app.post('/admin/add', upload.single('productImage'), async (req, res) => {
     try {
         if (!req.body.name || !req.body.brand || !req.body.category) {
@@ -85,7 +99,7 @@ app.post('/admin/add', upload.single('productImage'), async (req, res) => {
     }
 });
 
-// Delete Product Route[cite: 3]
+// Delete Product Route (Now protected by basicAuth)[cite: 1]
 app.post('/admin/delete/:id', async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -95,6 +109,6 @@ app.post('/admin/delete/:id', async (req, res) => {
     }
 });
 
-// 5. Dynamic Port for Hosting[cite: 3]
+// 6. Dynamic Port for Hosting
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Akbar Battery Server running on port ${PORT}`));
