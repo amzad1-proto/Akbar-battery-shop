@@ -3,83 +3,96 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard | Akbar Battery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Admin | Akbar Battery</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 p-8">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 pb-2">Inventory Management</h1>
-
-        <!-- Add Product Form -->
-        <div class="bg-white p-6 rounded-xl shadow-md mb-10">
-            <h2 class="text-xl font-semibold mb-4">Add New Item</h2>
-            <form action="/admin/add" method="POST" enctype="multipart/form-data" class="space-y-4">
-                <input type="text" name="name" placeholder="Battery/Product Name" class="w-full border p-2 rounded"
-                    required>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <select name="brand" class="border p-2 rounded" required>
-                        <option value="" disabled selected>Select Brand</option>
-                        <option value="Amaron">Amaron</option>
-                        <option value="Powerzone">Powerzone</option>
-                    </select>
-                    <select name="category" class="border p-2 rounded" required>
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="Vehicle">Vehicle</option>
-                        <option value="Inverter">Inverter</option>
-                        <option value="Lubricant">Lubricant</option>
-                    </select>
-                </div>
-
-                <input type="text" name="price" placeholder="Price (e.g. 5400)" class="w-full border p-2 rounded">
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Product Image</label>
-                    <input type="file" name="productImage" class="mt-1 block w-full text-sm text-gray-500"
-                        accept="image/*">
-                </div>
-
-                <button type="submit"
-                    class="w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700">Upload to
-                    Shop</button>
-            </form>
+<body class="bg-slate-50 p-6 md:p-12">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header with Logout -->
+        <div class="flex justify-between items-center mb-10 pb-6 border-b border-slate-200">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900">Inventory Management</h1>
+                <p class="text-slate-500 text-sm">Secure Admin Session Active</p>
+            </div>
+            <a href="/logout"
+                class="bg-slate-200 text-slate-700 px-4 py-2 rounded text-xs font-bold hover:bg-red-50 hover:text-red-600 transition-all">
+                Lock Session
+            </a>
         </div>
 
-        <!-- Inventory List -->
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-800 text-white">
-                    <tr>
-                        <th class="p-3">Item</th>
-                        <th class="p-3">Brand</th>
-                        <th class="p-3">Category</th>
-                        <th class="p-3 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% products.forEach(item=> { %>
-                        <tr class="border-b">
-                            <td class="p-3 font-medium">
-                                <%= item.name %>
-                            </td>
-                            <td class="p-3">
-                                <%= item.brand %>
-                            </td>
-                            <td class="p-3">
-                                <%= item.category %>
-                            </td>
-                            <td class="p-3 text-center">
-                                <form action="/admin/delete/<%= item._id %>" method="POST"
-                                    onsubmit="return confirm('Remove this item?')">
-                                    <button
-                                        class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <% }) %>
-                </tbody>
-            </table>
+        <div class="grid lg:grid-cols-3 gap-10">
+            <!-- Add Product Form -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-bold mb-6">New Product Entry</h2>
+                    <form action="/admin/add" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <input type="text" name="name" placeholder="Model Name"
+                            class="w-full border border-slate-200 p-3 rounded-lg outline-none" required>
+                        <select name="brand" class="w-full border border-slate-200 p-3 rounded-lg outline-none"
+                            required>
+                            <option value="" disabled selected>Brand</option>
+                            <option value="Amaron">Amaron</option>
+                            <option value="Powerzone">Powerzone</option>
+                        </select>
+                        <select name="category" class="w-full border border-slate-200 p-3 rounded-lg outline-none"
+                            required>
+                            <option value="" disabled selected>Category</option>
+                            <option value="Vehicle">Vehicle</option>
+                            <option value="Inverter">Inverter</option>
+                            <option value="Lubricant">Lubricant</option>
+                        </select>
+                        <input type="text" name="price" placeholder="Price (INR)"
+                            class="w-full border border-slate-200 p-3 rounded-lg outline-none">
+                        <input type="file" name="productImage" class="w-full text-xs text-slate-500" accept="image/*">
+                        <button type="submit"
+                            class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition-all">
+                            Add to Shop
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Inventory List -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th class="p-4 text-xs font-bold uppercase text-slate-400">Product</th>
+                                <th class="p-4 text-xs font-bold uppercase text-slate-400">Specs</th>
+                                <th class="p-4 text-center text-xs font-bold uppercase text-slate-400">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            <% products.forEach(item=> { %>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="p-4 font-semibold text-slate-900">
+                                        <%= item.name %>
+                                    </td>
+                                    <td class="p-4 text-sm text-slate-500">
+                                        <span
+                                            class="inline-block px-2 py-1 bg-slate-100 rounded text-[10px] font-bold mr-1">
+                                            <%= item.brand %>
+                                        </span>
+                                        <span class="text-xs italic">
+                                            <%= item.category %>
+                                        </span>
+                                    </td>
+                                    <td class="p-4 text-center">
+                                        <form action="/admin/delete/<%= item._id %>" method="POST"
+                                            onsubmit="return confirm('Archive this record?')">
+                                            <button
+                                                class="text-red-400 hover:text-red-600 font-bold text-xs uppercase transition-colors">Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </body>
