@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // 4. Admin Security Middleware
 // This protects ALL routes starting with /admin
 app.use('/admin', basicAuth({
-    users: { [process.env.ADMIN_USER || 'admin']: process.env.ADMIN_PASS || 'akbar786' },
+    users: { [process.env.ADMIN_USER]: process.env.ADMIN_PASS },
     challenge: true, // Shows the browser login popup
     realm: 'Akbar Battery Admin'
 }));
