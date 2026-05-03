@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // This protects ALL routes starting with /admin
 app.use('/admin', basicAuth({
     users: { [process.env.ADMIN_USER]: process.env.ADMIN_PASS },
-    challenge: true, // Shows the browser login popup
+    challenge: true,
     realm: 'Akbar Battery Admin'
 }));
 
