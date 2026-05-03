@@ -6,7 +6,7 @@ const multer = require('multer');
 const app = express();
 
 // 1. Database Connection - Updated with your Atlas String and Password
-const dbURI = 'mongodb+srv://akbar_admin:Akbar%40950543@cluster0.y6odwun.mongodb.net/batteryDB?retryWrites=true&w=majority';
+const dbURI = process.env.MONGODB_URI || 'your_old_link_here';
 
 mongoose.connect(dbURI)
     .then(() => console.log("✅ Akbar Battery Cloud DB Connected!"))
