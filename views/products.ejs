@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <title>Our Inventory | Akbar Battery</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .modal-transition {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50">
@@ -14,14 +19,11 @@
             <span class="text-xl font-normal text-gray-600 normal-case italic">Sathupally, Telangana</span>
         </h1>
 
-        <!-- Define the categories you want to display -->
         <% const sections=['Vehicle', 'Inverter' , 'Lubricant' ]; %>
 
             <% sections.forEach(section=> { %>
-                <!-- Filter products for the current section -->
                 <% const filteredProducts=products.filter(item=> item.category === section); %>
 
-                    <!-- Only show the section if there are products in it -->
                     <% if (filteredProducts.length> 0) { %>
                         <div class="mb-20">
                             <div class="flex items-center mb-8">
@@ -33,33 +35,25 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                                 <% filteredProducts.forEach(item=> { %>
-                                    <div
-                                        class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col hover:shadow-2xl transition-shadow duration-300">
+                                    <div onclick="openProductModal('<%= item.name %>', '<%= item.image %>', '<%= item.price %>', '<%= item.brand %>', '<%= section %>')"
+                                        class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col hover:shadow-2xl transition-all duration-300 cursor-pointer group">
 
-                                        <!-- Image Section -->
-                                        <div class="h-64 bg-gray-200 relative">
+                                        <div class="h-64 bg-gray-200 relative overflow-hidden">
                                             <% if (item.image) { %>
-                                                <img src="<%= item.image %>" class="w-full h-full object-cover"
+                                                <img src="<%= item.image %>"
+                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                     alt="Product">
-                                                <% } else { %>
+                                                <% } %>
                                                     <div
-                                                        class="flex items-center justify-center h-full text-gray-400 italic">
-                                                        No Photo Available</div>
-                                                    <% } %>
-
-                                                        <!-- Brand Badge -->
-                                                        <div
-                                                            class="absolute top-4 left-4 <%= item.brand === 'Amaron' ? 'bg-green-600' : 'bg-yellow-500' %> text-white px-3 py-1 rounded-full text-xs font-bold uppercase shadow-md">
-                                                            <%= item.brand %>
-                                                        </div>
+                                                        class="absolute top-4 left-4 <%= item.brand === 'Amaron' ? 'bg-green-600' : 'bg-yellow-500' %> text-white px-3 py-1 rounded-full text-xs font-bold uppercase shadow-md">
+                                                        <%= item.brand %>
+                                                    </div>
                                         </div>
 
-                                        <!-- Details Section -->
                                         <div class="p-6 flex-grow flex flex-col">
                                             <h2 class="text-2xl font-bold text-gray-800 mb-4">
                                                 <%= item.name %>
                                             </h2>
-
                                             <div class="mt-auto flex justify-between items-center">
                                                 <div class="flex flex-col">
                                                     <span
@@ -67,9 +61,13 @@
                                                     <span class="text-3xl font-black text-gray-900 leading-tight">₹<%=
                                                             item.price %></span>
                                                 </div>
-                                                <a href="tel:+919505433426"
-                                                    class="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-600 transition-colors duration-300 flex items-center gap-2">
-                                                    <span>Order Now</span>
+
+                                                <!-- UPDATED: WhatsApp Order Button -->
+                                                <a href="https://wa.me/919505433426?text=I%20want%20to%20order%20the%20<%= item.name %>%20from%20Akbar%20Battery"
+                                                    onclick="event.stopPropagation();" target="_blank"
+                                                    class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition-colors duration-300 flex items-center gap-2">
+                                                    <span class="text-lg">💬</span>
+                                                    <span>Order</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -80,6 +78,65 @@
                         <% } %>
                             <% }) %>
     </div>
+
+    <!-- FULL SCREEN MODAL -->
+    <div id="productModal"
+        class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden flex items-center justify-center p-4 modal-transition">
+        <button onclick="closeProductModal()"
+            class="absolute top-6 right-6 text-white text-5xl font-light hover:text-green-500 transition-colors z-[110]">&times;</button>
+        <div
+            class="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row shadow-2xl">
+            <div class="md:w-1/2 h-80 md:h-auto bg-gray-100 flex items-center justify-center">
+                <img id="modalImage" src="" class="w-full h-full object-contain p-4" alt="Product">
+            </div>
+            <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                <div id="modalBadge"
+                    class="inline-block self-start px-4 py-1 rounded-full text-white font-bold text-sm uppercase mb-4">
+                </div>
+                <h2 id="modalName" class="text-4xl md:text-5xl font-black text-gray-900 mb-6"></h2>
+                <div class="text-5xl font-black text-green-600 mb-8">₹<span id="modalPrice"></span></div>
+
+                <!-- UPDATED: Modal WhatsApp Link -->
+                <a id="modalWhatsApp" href="" target="_blank"
+                    class="bg-green-600 text-white text-center py-5 rounded-2xl font-black text-xl hover:bg-green-700 shadow-xl transition-all">
+                    ORDER ON WHATSAPP
+                </a>
+                <button onclick="closeProductModal()"
+                    class="mt-4 text-gray-400 font-bold hover:text-gray-800 transition-colors">Back to
+                    Inventory</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openProductModal(name, image, price, brand, category) {
+            const modal = document.getElementById('productModal');
+            const badge = document.getElementById('modalBadge');
+            const waLink = document.getElementById('modalWhatsApp');
+
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalImage').src = image || '';
+            document.getElementById('modalPrice').innerText = price;
+            badge.innerText = brand + ' | ' + category;
+
+            // Generate dynamic WhatsApp link for the modal
+            waLink.href = "https://wa.me/919505433426?text=I%20want%20to%20order%20the%20" + encodeURIComponent(name);
+
+            if (brand === 'Amaron') {
+                badge.className = 'inline-block self-start px-4 py-1 rounded-full text-white font-bold text-sm uppercase mb-4 bg-green-600';
+            } else {
+                badge.className = 'inline-block self-start px-4 py-1 rounded-full text-white font-bold text-sm uppercase mb-4 bg-yellow-500';
+            }
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
 </body>
 
 </html>
