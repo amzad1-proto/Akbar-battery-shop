@@ -3,71 +3,108 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Inventory | Akbar Battery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .modal-transition {
             transition: opacity 0.3s ease-in-out;
         }
+
+        .backdrop-blur-nav {
+            backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
     </style>
 </head>
 
-<body class="bg-gray-50">
-    <div class="container mx-auto px-4 py-12">
-        <h1 class="text-4xl font-black text-center mb-16 text-gray-900 uppercase italic tracking-tighter">
-            Akbar Battery & Automobiles <br>
-            <span class="text-xl font-normal text-gray-600 normal-case italic">Sathupally, Telangana</span>
-        </h1>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+    <!-- 1. MODERN NAVIGATION WITH GLASS EFFECTS -->
+    <nav class="backdrop-blur-nav shadow-sm p-4 sticky top-0 z-[60] border-b border-gray-100">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-black text-green-600 italic tracking-tighter">
+                AKBAR <span class="text-gray-800">BATTERY</span>
+            </h1>
+            <div class="hidden md:flex space-x-8 font-bold text-gray-600">
+                <a href="/" class="hover:text-green-600 transition-colors">Home</a>
+                <a href="/products" class="text-green-600 border-b-2 border-green-600">Products</a>
+                <a href="/about" class="hover:text-green-600 transition-colors">About</a>
+                <a href="/contact" class="hover:text-green-600 transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. SEARCH & HERO SECTION -->
+    <header class="bg-white border-b border-gray-100 py-12 px-4">
+        <div class="container mx-auto max-w-4xl text-center">
+            <h2 class="text-4xl font-black text-gray-900 mb-4">Find Your Power Solution</h2>
+            <p class="text-gray-500 mb-8">Authorized Dealer for Amaron & Powerzone in Sathupally</p>
+
+            <!-- Real-time Search Bar -->
+            <div class="relative max-w-2xl mx-auto">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
+                <input type="text" id="searchInput" onkeyup="filterProducts()"
+                    placeholder="Search by name, brand (Amaron), or type (Inverter)..."
+                    class="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-100 focus:border-green-500 outline-none shadow-lg transition-all text-lg">
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12 flex-grow">
+        <!-- Results Container -->
+        <div id="noResults" class="hidden text-center py-20">
+            <p class="text-2xl text-gray-400 font-bold">No products match your search.</p>
+            <p class="text-gray-500 mt-2">Try searching for "Amaron" or "Vehicle".</p>
+        </div>
 
         <% const sections=['Vehicle', 'Inverter' , 'Lubricant' ]; %>
-
             <% sections.forEach(section=> { %>
                 <% const filteredProducts=products.filter(item=> item.category === section); %>
-
                     <% if (filteredProducts.length> 0) { %>
-                        <div class="mb-20">
+                        <div class="mb-20 section-group" data-section="<%= section %>">
                             <div class="flex items-center mb-8">
-                                <h2 class="text-3xl font-bold text-gray-800 uppercase tracking-wide">
+                                <h2 class="text-2xl font-black text-gray-800 uppercase tracking-widest">
                                     <%= section %>s
                                 </h2>
-                                <div class="flex-grow h-1 bg-green-600 ml-6 rounded-full opacity-20"></div>
+                                <div class="flex-grow h-px bg-gray-200 ml-6"></div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 <% filteredProducts.forEach(item=> { %>
-                                    <div onclick="openProductModal('<%= item.name %>', '<%= item.image %>', '<%= item.price %>', '<%= item.brand %>', '<%= section %>')"
-                                        class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+                                    <div class="product-card bg-white rounded-3xl shadow-sm hover:shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 cursor-pointer overflow-hidden group"
+                                        data-name="<%= item.name.toLowerCase() %>"
+                                        data-brand="<%= item.brand.toLowerCase() %>"
+                                        onclick="openProductModal('<%= item.name %>', '<%= item.image %>', '<%= item.price %>', '<%= item.brand %>', '<%= section %>')">
 
-                                        <div class="h-64 bg-gray-200 relative overflow-hidden">
+                                        <div class="h-64 bg-gray-50 relative overflow-hidden">
                                             <% if (item.image) { %>
                                                 <img src="<%= item.image %>"
-                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                     alt="Product">
                                                 <% } %>
                                                     <div
-                                                        class="absolute top-4 left-4 <%= item.brand === 'Amaron' ? 'bg-green-600' : 'bg-yellow-500' %> text-white px-3 py-1 rounded-full text-xs font-bold uppercase shadow-md">
+                                                        class="absolute top-4 left-4 <%= item.brand === 'Amaron' ? 'bg-green-600' : 'bg-yellow-500' %> text-white px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">
                                                         <%= item.brand %>
                                                     </div>
                                         </div>
 
-                                        <div class="p-6 flex-grow flex flex-col">
-                                            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                                        <div class="p-6 flex flex-col flex-grow">
+                                            <h3 class="text-xl font-bold text-gray-900 mb-4">
                                                 <%= item.name %>
-                                            </h2>
-                                            <div class="mt-auto flex justify-between items-center">
-                                                <div class="flex flex-col">
-                                                    <span
-                                                        class="text-gray-400 text-xs uppercase font-bold tracking-tighter leading-none">Price</span>
-                                                    <span class="text-3xl font-black text-gray-900 leading-tight">₹<%=
-                                                            item.price %></span>
+                                            </h3>
+                                            <div class="mt-auto flex justify-between items-end">
+                                                <div>
+                                                    <p
+                                                        class="text-gray-400 text-xs font-bold uppercase tracking-widest">
+                                                        Starting Price</p>
+                                                    <p class="text-3xl font-black text-gray-900">₹<%= item.price %>
+                                                    </p>
                                                 </div>
-
-                                                <!-- UPDATED: WhatsApp Order Button -->
-                                                <a href="https://wa.me/919505433426?text=I%20want%20to%20order%20the%20<%= item.name %>%20from%20Akbar%20Battery"
+                                                <a href="https://wa.me/919505433426?text=Order%20Inquiry:%20<%= item.name %>"
                                                     onclick="event.stopPropagation();" target="_blank"
-                                                    class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition-colors duration-300 flex items-center gap-2">
-                                                    <span class="text-lg">💬</span>
-                                                    <span>Order</span>
+                                                    class="bg-green-600 text-white p-3 rounded-2xl hover:bg-green-700 transition-colors shadow-lg">
+                                                    <span class="text-xl">💬</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -77,58 +114,98 @@
                         </div>
                         <% } %>
                             <% }) %>
-    </div>
+    </main>
+
+    <!-- 3. PROFESSIONAL FOOTER -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="container mx-auto px-6 grid md:grid-cols-3 gap-12 border-b border-gray-800 pb-12 mb-8">
+            <div>
+                <h4 class="text-xl font-black mb-6 text-green-500">AKBAR BATTERY</h4>
+                <p class="text-gray-400 leading-relaxed">Your trusted partner for automotive and home energy solutions
+                    in Sathupally. Authorized dealer for Amaron and Powerzone.</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold mb-6 italic">Shop Hours</h4>
+                <ul class="text-gray-400 space-y-2">
+                    <li class="flex justify-between"><span>Mon - Sat:</span> <span>9:00 AM - 8:30 PM</span></li>
+                    <li class="flex justify-between"><span>Sunday:</span> <span class="text-yellow-500 font-bold">Open
+                            (Half Day)</span></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold mb-6 italic">Contact Location</h4>
+                <p class="text-gray-400 mb-4">7-171/1, Rajubapaya Hospital Road, T.P.R Residency, Sathupally, 507303</p>
+                <a href="tel:+919505433426" class="text-2xl font-black text-white hover:text-green-500">+91
+                    9505433426</a>
+            </div>
+        </div>
+        <p class="text-center text-gray-600 text-sm">© 2026 Akbar Battery & Automobiles. All rights reserved.</p>
+    </footer>
+
+    <!-- 4. FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/919505433426" target="_blank"
+        class="fixed bottom-8 right-8 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 transition-transform z-[100] animate-bounce">
+        💬
+    </a>
 
     <!-- FULL SCREEN MODAL -->
-    <div id="productModal"
-        class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden flex items-center justify-center p-4 modal-transition">
+    <div id="productModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4">
         <button onclick="closeProductModal()"
-            class="absolute top-6 right-6 text-white text-5xl font-light hover:text-green-500 transition-colors z-[110]">&times;</button>
-        <div
-            class="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row shadow-2xl">
-            <div class="md:w-1/2 h-80 md:h-auto bg-gray-100 flex items-center justify-center">
-                <img id="modalImage" src="" class="w-full h-full object-contain p-4" alt="Product">
+            class="absolute top-6 right-6 text-white text-5xl font-light z-[210] hover:text-green-500">&times;</button>
+        <div class="bg-white rounded-[2rem] max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row">
+            <div class="md:w-1/2 h-80 md:h-auto bg-gray-100 p-8 flex items-center justify-center">
+                <img id="modalImage" src="" class="max-w-full max-h-full object-contain" alt="Product View">
             </div>
-            <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                <div id="modalBadge"
-                    class="inline-block self-start px-4 py-1 rounded-full text-white font-bold text-sm uppercase mb-4">
-                </div>
-                <h2 id="modalName" class="text-4xl md:text-5xl font-black text-gray-900 mb-6"></h2>
-                <div class="text-5xl font-black text-green-600 mb-8">₹<span id="modalPrice"></span></div>
-
-                <!-- UPDATED: Modal WhatsApp Link -->
+            <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                <span id="modalBadge"
+                    class="self-start px-4 py-1 rounded-full text-white font-bold text-xs uppercase mb-4"></span>
+                <h2 id="modalName" class="text-4xl font-black text-gray-900 mb-6"></h2>
+                <div class="text-5xl font-black text-green-600 mb-10">₹<span id="modalPrice"></span></div>
                 <a id="modalWhatsApp" href="" target="_blank"
                     class="bg-green-600 text-white text-center py-5 rounded-2xl font-black text-xl hover:bg-green-700 shadow-xl transition-all">
-                    ORDER ON WHATSAPP
+                    INQUIRE ON WHATSAPP
                 </a>
-                <button onclick="closeProductModal()"
-                    class="mt-4 text-gray-400 font-bold hover:text-gray-800 transition-colors">Back to
-                    Inventory</button>
             </div>
         </div>
     </div>
 
+    <!-- JAVASCRIPT FOR SEARCH & MODAL -->
     <script>
-        function openProductModal(name, image, price, brand, category) {
-            const modal = document.getElementById('productModal');
-            const badge = document.getElementById('modalBadge');
-            const waLink = document.getElementById('modalWhatsApp');
+        function filterProducts() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.product-card');
+            const sections = document.querySelectorAll('.section-group');
+            let hasResults = false;
 
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const brand = card.getAttribute('data-brand');
+                if (name.includes(input) || brand.includes(input)) {
+                    card.classList.remove('hidden');
+                    hasResults = true;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Hide empty section headers
+            sections.forEach(section => {
+                const visibleCards = section.querySelectorAll('.product-card:not(.hidden)');
+                section.style.display = visibleCards.length > 0 ? 'block' : 'none';
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', hasResults);
+        }
+
+        function openProductModal(name, image, price, brand, category) {
             document.getElementById('modalName').innerText = name;
             document.getElementById('modalImage').src = image || '';
             document.getElementById('modalPrice').innerText = price;
+            const badge = document.getElementById('modalBadge');
             badge.innerText = brand + ' | ' + category;
-
-            // Generate dynamic WhatsApp link for the modal
-            waLink.href = "https://wa.me/919505433426?text=I%20want%20to%20order%20the%20" + encodeURIComponent(name);
-
-            if (brand === 'Amaron') {
-                badge.className = 'inline-block self-start px-4 py-1 rounded-full text-white font-bold text-sm uppercase mb-4 bg-green-600';
-            } else {
-                badge.className = 'inline-block self-start px-4 py-1 rounded-full text-white font-bold text-sm uppercase mb-4 bg-yellow-500';
-            }
-
-            modal.classList.remove('hidden');
+            badge.className = `self-start px-4 py-1 rounded-full text-white font-bold text-xs uppercase mb-4 ${brand === 'Amaron' ? 'bg-green-600' : 'bg-yellow-500'}`;
+            document.getElementById('modalWhatsApp').href = `https://wa.me/919505433426?text=I'm%20interested%20in:%20${encodeURIComponent(name)}`;
+            document.getElementById('productModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
